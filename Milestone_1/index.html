@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>BOOLFLIX</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js"></script>
+
+  <!-- Fontawesome  -->
+  <script src="https://kit.fontawesome.com/30fc0982d8.js"></script>
+  <script type="text/javascript" src="assets/js/fontawesome/font.js"></script>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+  <body>
+    <div id="appMoviesSearch" class="app_wrap">
+      <header>
+        <div class="container">
+          <img src="assets/img/logo.png" alt="logo" />
+          <h1>🎦 Moves Filter </h1>
+          <nav>
+            <form method="GET" @submit.prevent="searchMovies">
+              <input type="text" name="q" size="40" maxlength="256" v-model="search" placeholder="Search">
+              <input type="submit" name="search_button" value="Search">
+            </form>
+          </nav>
+        </div>
+      </header>
+
+      <main class="cds-container container">
+        <!--TopBar - di navigazione tra le pagine di risultati ottenute -->
+        <nav class="control_page" v-if="totalPage">
+          <ul class="number_page">
+            <li class="arrow_left" v-if="totalPage>1" @click="pagePrevious()"><i
+                class="fas fa-arrow-alt-square-left"></i>
+            </li><!-- si potrebbe inserire un keydown da collegare all'arrow da tastiera -->
+            <li class="number_page_control" v-for="index in totalPage" :key="index"
+              @click="(page = index-1)&&callAPIMovies()">
+              {{index++}}</li>
+            <!-- /.page -->
+            <li class="arrow_right" v-if="totalPage>1" @click="pageNext()"><i class="fas fa-arrow-alt-square-right"></i>
+          </ul>
+          <!-- /.number_page -->
+        </nav>
+        <!-- Disco ad esempio -->
+        <div class="movie" v-for="movie in moviesList">
+          <img :src="'https://image.tmdb.org/t/p/w500' +movie.poster_path" alt=""><!-- tener presente di inserire un iff in caso di null -->
+          <h2 class="title_movie">Titolo: {{movie.title}}</h2>
+          <h3 class="original_title_movie">Titolo originale: {{movie.original_title}}</h3>
+          <span class="language_movie">{{movie.author}}</span>
+          <span class="vote_movie">{{Math.ceil(movie.vote_average/2)}}</span>
+          <span class="flag_movie">{{movie.original_language}}</span>
+        </div>
+        <!--FooterBar - di navigazione tra le pagine di risultati ottenute -->
+        <nav class="control_page" v-if="totalPage">
+          <ul class="number_page">
+            <li class="arrow_left" v-if="totalPage>1" @click="pagePrevious()"><i
+                class="fas fa-arrow-alt-square-left"></i>
+            </li><!-- si potrebbe inserire un keydown da collegare all'arrow da tastiera -->
+            <li class="number_page_control" v-for="index in totalPage" :key="index"
+              @click="(page = index-1)&&callAPIMovies()">{{index++}}
+            </li>
+            <!-- /.page -->
+            <li class="arrow_right" v-if="totalPage>1" @click="pageNext()"><i class="fas fa-arrow-alt-square-right"></i>
+          </ul>
+          <!-- /.number_page -->
+        </nav>
+        <!-- /.control_page -->
+      </main>
+    </div>
+    <!-- /.app_wrap -->
+
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="assets/js/main.js" charset="utf-8"></script>
+  </body>
+
+</html>
