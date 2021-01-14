@@ -31,7 +31,7 @@ header>.container{
 }
 
 header img {
-    height: 80px;
+    height: 50px;
     margin-top: 10px;
 }
 nav>select {
@@ -52,14 +52,20 @@ nav>select {
     padding: 100px 0;
 }
 
+.wrap{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 .movie {
     min-height: fit-content;
-    height: 650px;
+    min-height: 650px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     flex-direction: column;
-    flex-basis: 350px;
+    flex-wrap: wrap;
+    flex-basis: 500px;
     padding: 20px;
     margin: 10px 20px;
     background: rgb(46, 58, 70);
@@ -85,8 +91,8 @@ nav>select {
     font-size: 20px;
 }
 
-.movie span.vote_movie {
-    color: grey;
+.movie span.stars_vote {
+    color: rgb(224, 238, 30);
 }
 
 .number_page_control {
