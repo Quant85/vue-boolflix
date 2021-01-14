@@ -24,65 +24,57 @@ let appMoviesSearch = new Vue ({
 		totalPageSerieTV:0,
 	},
 	methods: {
-		arround() {
+		//ho inserito il variatore di scala direttamente del condizionale costruito mediante operatori ternari in html
+/* 		arround() {
 			this.moviesList.forEach(element => {
 				element.vote_average = Math.ceil(element.vote_average/2);
 				//console.log(element.vote_average);
 			});
+		}, */
+		getData(url){
+				return axios.get(url);
 		},
 		callAPIMovies: function() {
 			/* quando guardiamo nella scheda rete si può notare che con due richieste separate separate una dopo l'altra, cioè sfalsata - richiedendo più tempo e potenzialmente creare problemi di latenze e virtualizzazioni con Vue. Se le due richieste non sono dipendenti, possiamo utilizzare il promise.all() che ci consnete di accettare più promesse in un array, le esegue simultaneamente e restituisce una serie di risposte come promessa */
-			let configMovies = {
-				method: 'get',
-        url: `https://api.themoviedb.org/3/search/movie?api_key=3da5e6e7a04f636199811dd74636e80d&language=${this.language}&query=${this.search}&page=${this.pageMovies}&include_adult=true`,
-			};
-			axios (configMovies)//quando la promessa è stata mantenutaparte il then - riceve una chiamata, e vogliamo manipolare la risposta in arrivo
-			.then(resp => {
-				this.moviesList = resp.data.results;
-				this.totalPageMovies = resp.data.total_pages;
-				this.arround();
-			})
-			.catch(error => {
-					console.log(error);
-			});
 
-			//Serie TV
-			let configTV = {
-				method: 'get',
-        url: `https://api.themoviedb.org/3/search/tv?api_key=3da5e6e7a04f636199811dd74636e80d&language=${this.language}&query=${this.search}&page=${this.pageSerieTV}&include_adult=true`,
-			};
-			axios (configTV)
-			.then(resp => {
-				this.serieTVList = resp.data.results;
-				this.totalPageSerieTV = resp.data.total_pages;
-				this.serieTVList.forEach(element => {
-				element.vote_average = Math.ceil(element.vote_average/2);
-			});
-			})
-			.catch(error => {
-					console.log(error);
-			});
+			/******* Si crea dipendenza nella generazione ******/
+			/* Promise.all () accetta più promesse in un array, le esegue simultaneamente e restituisce una serie di risposte come promessa. */
 
-			//per associale la lingua che segue lo standard ISO639-1 alla relativa bandiera di appartenenza si è pensato di usare una seconda API effettuando una chiamata successiva
-			/* let configCountry = {
-				method: 'get',
-        url: `https://restcountries.eu/rest/v2/`,
-			};
+			let movies = `https://api.themoviedb.org/3/search/movie?api_key=3da5e6e7a04f636199811dd74636e80d&language=${this.language}&query=${this.search}&page=${this.pageMovies}&include_adult=true`;
+			let serieTv = `https://api.themoviedb.org/3/search/tv?api_key=3da5e6e7a04f636199811dd74636e80d&language=${this.language}&query=${this.search}&page=${this.pageSerieTV}&include_adult=true`;
+			let countryRest = `https://restcountries.eu/rest/v2/`;
+
+			const promise = Promise.all([this.getData(movies), this.getData(serieTv), this.getData(countryRest)]);
 			
-			axios(configCountry)
-			.then(resp => {
-				let country = resp.data;
+
+			//destrutturia la promaise 
+			promise.then(([resp1,resp2,resp3]) => {
+				//console.log(resp1,resp2,resp3);
+
+				//Movies
+				this.moviesList = resp1.data.results;
+				this.totalPageMovies = resp1.data.total_pages;
+
+				//Serie TV 
+				this.serieTVList = resp2.data.results;
+				this.totalPageSerieTV = resp2.data.total_pages;
+
+				//chiamata APY Country REST
+				let country = resp3.data;
 				console.log(country);
 				for (let index = 0; index < this.moviesList.length; index++) {
 					let movieCardLenguage = this.moviesList[index].original_language;
 					console.log(movieCardLenguage);
-					let country = resp.data;
+					let country = resp3.data;
 					for (let i = 0; i < country.length; i++) {
 						const element = country[i].languages[0].iso639_1;
 						console.log(element);
 					}
 				}
-			}); */
+			})
+			.catch(error => {
+					console.log(error);
+			});
 		},
 		searchMovies(){
 			this.pageMovies = 1;

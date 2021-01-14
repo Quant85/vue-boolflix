@@ -63,7 +63,7 @@
               <span class="language_movie">{{movie.author}}</span>
               <div>
                 <span class="stars_vote" v-for="(stars,position) in 5">
-                  <i :class="movie.vote_average > position ? 'fas fa-star' : 'far fa-star'"></i>
+                  <i :class="(Math.ceil(movie.vote_average/2)) > position ? 'fas fa-star' : 'far fa-star'"></i>
                 </span>
                 <!-- il richiamare su livelli paralleli il v-for e manipolare lo stesso elemento a volte a vue da problemi perchè vorrebbe riutilizzare una risorsa che è stata sovrascritta e non trova - fonte staff Vue -->          
               </div>
@@ -119,7 +119,7 @@
               <span class="language_movie">{{serie.author}}</span>
               <div>
                 <span class="stars_vote" v-for="(stars,position) in 5">
-                  <i :class="serie.vote_average > position ? 'fas fa-star' : 'far fa-star'"></i>
+                  <i :class="(Math.ceil(serie.vote_average/2)) > position ? 'fas fa-star' : 'far fa-star'"></i>
                 </span>
               </div>
                 <!-- il richiamare su livelli paralleli il v-for e manipolare lo stesso elemento a volte a vue da problemi perchè vorrebbe riutilizzare una risorsa che è stata sovrascritta e non trova - fonte staff Vue -->
