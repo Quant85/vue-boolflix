@@ -20,16 +20,15 @@ let appMoviesSearch = new Vue ({
 	el:'#appMoviesSearch',
 	data: {
 		key: '3da5e6e7a04f636199811dd74636e80d',
-		searchResults:null,
-		moviesList: [],
-		serieTVList: [],//potrei creare un array di oggetti 
+		searchResults:{},
+		//moviesList: [],//togliere
+		//serieTVList: [],//potrei creare un array di oggetti -togliere
 		search:"",
-		pageMovies: 1,
-		pageSerieTV: 1,
+		//pageMovies: 1,//inserito di default in chiamata
+		//pageSerieTV: 1,//inserito di default in chiamata
 		language:"it-IT",
-		totalPageMovies:0,
-		totalPageSerieTV:0,
-		arrayFlag:[],
+		//totalPageMovies:0,//inserito di default in chiamata
+		//totalPageSerieTV:0,//togliere
 	},
 	methods: {
 
@@ -53,13 +52,77 @@ let appMoviesSearch = new Vue ({
 			promise.then(([resp1,resp2,resp3]) => {
 				console.log(resp1,resp2,resp3);
 
-				//Movies
-				this.moviesList = resp1.data.results;
-				this.totalPageMovies = resp1.data.total_pages;
+				function listResults() {}
+				const objRisults = new listResults();
 
-				//Serie TV 
-				this.serieTVList = resp2.data.results;
-				this.totalPageSerieTV = resp2.data.total_pages;
+				function listResultsMovies() {}//definisco l'oggetto
+				const objRisultatiMovies = new listResultsMovies();//creo e assegno l'oggetto di nome listResult - equivale ad usare un costructor tipo oggettoRisultati = Object.create(listResultsMovies.prototype);
+
+				function listResultsSeries() {}//definisco l'oggetto
+				const objRisultatiSeries = new listResultsSeries();//come per film cosi per serie tv
+
+				//questa funzione mi permette di assegmare degòi oggetti ad un oggetto origine che è il primo 
+				function addElement(objRisultati,moviesList,seriesList,pageTot,startPage) {
+					let newList = Object.assign(objRisultati, moviesList,seriesList);
+					return newList;
+				}
+
+				//Movies ------------
+				let moviesRes = resp1.data.results;//faccio una richiesta per i film
+				this.totalPageMovies = resp1.data.total_pages;//---da eliminare
+
+				let arrayMovies = [];//mi creo un array di appoggio per poi creare un oggetto di ogetti contenenti tutti i risultati dei film
+				moviesRes.forEach(element => {
+					let moviesList = {
+						backgroungImgPoster: element.poster_path,
+						title: element.title,
+						originalTitle:element.original_title,
+						originaleLanguage:element.original_language,
+						vote:(Math.ceil(element.vote_average/2)),
+						flag:""
+					};
+					arrayMovies.push(moviesList);
+				});
+
+				objRisultatiMovies.arrayMovies = arrayMovies;			
+				objRisultatiMovies.pageMovies = 1;
+				objRisultatiMovies.totalPageMovies = resp1.data.total_pages;
+				
+				//console.log(objRisultatiMovies);
+				
+				
+				//Serie TV ---------
+				let seriesRes = resp2.data.results;//faccio una richiesta per le serie tv
+				this.totalPageSerieTV = resp2.data.total_pages;//---da eliminare perchè richamata nel nuovo oggetto creato
+
+				let arraySeries = [];//mi creo un array di appoggio per i risultati delle serie tv
+				seriesRes.forEach(element => {
+					let seriesList = {
+						backgroungImgPoster: element.poster_path,
+						title: element.name,
+						originalTitle:element.original_name,
+						originaleLanguage:element.original_language,
+						vote:(Math.ceil(element.vote_average/2)),
+						flag:""
+					};
+					arraySeries.push(seriesList);
+				});
+
+				objRisultatiSeries.arraySeries = arraySeries;			
+				objRisultatiSeries.pageSerieTV = 1;
+				objRisultatiSeries.totalPageSerieTV = resp2.data.total_pages;
+
+				//console.log(objRisultatiMovies);
+
+				addElement(objRisults,objRisultatiMovies,objRisultatiSeries);
+
+				//console.log(objRisults);
+
+				//this.moviesList = objRisultatiMovies;//opzionale - per futuri sviluppi
+				//this.serieTVList = objRisultatiSeries;//opzionale -per futuri sviluppi
+				this.searchResults = objRisults;
+
+
 
 				//chiamata APY Country REST
 				for (let index = 0; index < this.moviesList.length; index++) {
@@ -73,13 +136,12 @@ let appMoviesSearch = new Vue ({
 						let prova=obj.population;
 						arrProvvisorio.push(prova);
 					}); */
-					let restObj = [...country.filter((lang) => ((lang.alpha2Code).toLowerCase() == movieCardLenguage))];
+					/* let restObj = [...country.filter((lang) => ((lang.alpha2Code).toLowerCase() == movieCardLenguage))];
+					let flagLink = restObj[0].flag;
+					console.log(flagLink); */
 
-					moviesList.forEach(element => {
-						this.moviesList.flagLink = 
-						
-					});
-					console.log(restObj[0].flag);
+					//this.arrayFlag = {flagLink: flagLink};
+					//console.log(restObj[0].flag);
 					
 					// ------ricordati che sei in un ciclo for sopra ----
 
@@ -103,17 +165,18 @@ let appMoviesSearch = new Vue ({
 					} */
 					//this.arrayFlag.push(languagesAPI_ISO639_1);
 					//console.log(this.arrayFlag[0][1][1]);//questo è il link della bandiera trovata
-					console.log(restObj);
 				}
 			})
 			.catch(error => {
 					console.log(error);
 			});
 		},
-		searchMovies(){
-			this.pageMovies = 1;
-			this.pageSerieTV = 1;
-			this.callAPIMovies();
+		searchMovies(search){
+			if (search!="") {
+				this.pageMovies = 1;
+				this.pageSerieTV = 1;
+				this.callAPIMovies();
+			}
 		},
 
 		//trasformare in funzioni riutilizzabili
