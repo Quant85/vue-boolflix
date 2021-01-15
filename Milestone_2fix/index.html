@@ -45,7 +45,7 @@
                   class="fas fa-arrow-alt-square-left"></i>
               </li><!-- si potrebbe inserire un keydown da collegare all'arrow da tastiera -->
               <li class="number_page_control" v-for="index in searchResults.totalPageMovies"
-                @click="(searchResults.pageMovies = index-1)&&callAPIMovies()">
+                @click="(pageMovies = index-1)&&callAPIMovies()">
                 {{index++}}</li>
               <!-- /.page -->
               <li class="arrow_right" v-if="searchResults.totalPageMovies>1" @click="pageNext()"><i
@@ -82,10 +82,10 @@
                   class="fas fa-arrow-alt-square-left"></i>
               </li><!-- si potrebbe inserire un keydown da collegare all'arrow da tastiera -->
               <li class="number_page_control" v-for="index in searchResults.totalPageMovies"
-                @click="(searchResults.pageMovies = index-1)&&callAPIMovies()">{{index++}}
+                @click="(pageMovies = index-1)&&callAPIMovies()">{{index++}}
               </li>
               <!-- /.page -->
-              <li class="arrow_right" v-if="totalPageMovies>1" @click="pageNext()">
+              <li class="arrow_right" v-if="searchResults.totalPageMovies>1" @click="pageNext()">
                 <i class="fas fa-arrow-alt-square-right"></i>
             </ul>
             <!-- /.number_page -->
@@ -103,7 +103,7 @@
                   class="fas fa-arrow-alt-square-left"></i>
               </li><!-- si potrebbe inserire un keydown da collegare all'arrow da tastiera -->
               <li class="number_page_control" v-for="index in searchResults.totalPageSerieTV"
-                @click="(searchResults.pageSerieTV = index-1)&&callAPIMovies()">
+                @click="(pageSerieTV = index-1)&&callAPIMovies()">
                 {{index++}}</li>
               <!-- /.page -->
               <li class="arrow_right" v-if="searchResults.totalPageSerieTV>1" @click="pageNext()"><i
@@ -132,15 +132,17 @@
           <!--FooterBar - di navigazione tra le pagine di risultati ottenute -->
           <nav class="control_page" v-if="searchResults.totalPageSerieTV">
             <ul class="number_page">
-              <li class="arrow_left" v-if="searchResults.totalPageSerieTV>1" @click="pagePreviousSerieTV()"><i
+              <li class="arrow_left" v-if="searchResults.totalPageSerieTV>1"
+                @click="pagePreviousSerieTV()"><i
                   class="fas fa-arrow-alt-square-left"></i>
               </li><!-- si potrebbe inserire un keydown da collegare all'arrow da tastiera -->
               <li class="number_page_control" v-for="index in searchResults.totalPageSerieTV"
-                @click="(searchResults.pageSerieTV = index-1)&&callAPIMovies()">
+                @click="(pageSerieTV = index-1)&&callAPIMovies()">
                 {{index++}}
               </li>
               <!-- /.page -->
-              <li class="arrow_right" v-if="totalPageSerieTV>1" @click="pageNextSerieTV()">
+              <li class="arrow_right" v-if="searchResults.totalPageSerieTV>1"
+                @click="(pageNextSerieTV())">
                 <i class="fas fa-arrow-alt-square-right"></i>
             </ul>
             <!-- /.number_page -->
