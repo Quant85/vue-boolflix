@@ -4,14 +4,11 @@
 <head>
   <meta charset="utf-8">
   <title>BOOLFLIX</title>
-  <!-- favicon -->
   <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon/favicon.icon">
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js"></script>
-
 
   <!-- Fontawesome  -->
   <script src="https://kit.fontawesome.com/30fc0982d8.js"></script>
@@ -25,7 +22,7 @@
     <div id="appMoviesSearch" class="app_wrap">
       <header>
         <div class="container">
-          <img src="assets/img/logo.png" alt="logo" />
+          <img src="assets/img/logo_2.png" alt="logo" />
           <h1>🎦 Moves Filter </h1>
           <nav>
             <form method="POST" @submit.prevent="searchMovies()">
@@ -57,7 +54,7 @@
           </nav>
           <div class="wrap">
             <!-- Movie Section -->
-            <div class="movie" v-for="movie in moviesList">
+            <div class="movie" v-for="(movie,n) in moviesList">
               <img 
               v-if="movie.poster_path"
               :src="'https://image.tmdb.org/t/p/w342' + movie.poster_path" 
@@ -67,14 +64,13 @@
               <h2 class="title_movie" v-if="movie.title != movie.original_title">Titolo: {{movie.title}}</h2>
               <h3 class="original_title_movie" >Titolo originale:
                 {{movie.original_title}}</h3><!-- modificare verifica trasformando in maiuscolo -->
-              <span class="language_movie">{{movie.author}}</span>
               <div>
                 <span class="stars_vote" v-for="(stars,position) in 5">
                   <i :class="(Math.ceil(movie.vote_average/2)) > position ? 'fas fa-star' : 'far fa-star'"></i>
-                </span>
-                <!-- il richiamare su livelli paralleli il v-for e manipolare lo stesso elemento a volte a vue da problemi perchè vorrebbe riutilizzare una risorsa che è stata sovrascritta e non trova - fonte staff Vue -->          
+                </span>         
               </div>
-              <span class="flag_movie">{{movie.original_language}}</span>
+              <img  src="" alt="">
+              <span  class="flag_movie">{{movie.original_language}}</span>
             </div>
           </div>
           <!-- /.wrap -->
@@ -123,13 +119,11 @@
               <h2 class="title_movie" v-if="serie.name != serie.original_name">Titolo: {{serie.name}}</h2>
               <h3 class="original_title_movie">Titolo originale:
                 {{serie.original_name}}</h3><!-- modificare verifica trasformando in maiuscolo -->
-              <span class="language_movie">{{serie.author}}</span>
               <div>
                 <span class="stars_vote" v-for="(stars,position) in 5">
-                  <i :class="(Math.ceil(serie.vote_average/2)) > position ? 'fas fa-star' : 'far fa-star'"></i>
+                  <i :class="serie.vote_average > position ? 'fas fa-star' : 'far fa-star'"></i>
                 </span>
               </div>
-                <!-- il richiamare su livelli paralleli il v-for e manipolare lo stesso elemento a volte a vue da problemi perchè vorrebbe riutilizzare una risorsa che è stata sovrascritta e non trova - fonte staff Vue -->
               <span class="flag_movie">{{serie.original_language}}</span>
             </div>
           </div>

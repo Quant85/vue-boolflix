@@ -20,7 +20,7 @@ let appMoviesSearch = new Vue ({
 	el:'#appMoviesSearch',
 	data: {
 		key: '3da5e6e7a04f636199811dd74636e80d',
-		//searchResults:null,
+		searchResults:null,
 		moviesList: [],
 		serieTVList: [],//potrei creare un array di oggetti 
 		search:"",
@@ -29,15 +29,10 @@ let appMoviesSearch = new Vue ({
 		language:"it-IT",
 		totalPageMovies:0,
 		totalPageSerieTV:0,
+		arrayFlag:[],
 	},
 	methods: {
-		//ho inserito il variatore di scala direttamente del condizionale costruito mediante operatori ternari in html
-/* 		arround() {
-			this.moviesList.forEach(element => {
-				element.vote_average = Math.ceil(element.vote_average/2);
-				//console.log(element.vote_average);
-			});
-		}, */
+
 		getData(url){
 				return axios.get(url);
 		},
@@ -47,16 +42,16 @@ let appMoviesSearch = new Vue ({
 			/******* Si crea dipendenza nella generazione ******/
 			/* Promise.all () accetta più promesse in un array, le esegue simultaneamente e restituisce una serie di risposte come promessa. */
 
-			let movies = `https://api.themoviedb.org/3/search/movie?api_key=3da5e6e7a04f636199811dd74636e80d&language=${this.language}&query=${this.search}&page=${this.pageMovies}&include_adult=true`;
-			let serieTv = `https://api.themoviedb.org/3/search/tv?api_key=3da5e6e7a04f636199811dd74636e80d&language=${this.language}&query=${this.search}&page=${this.pageSerieTV}&include_adult=true`;
-			let countryRest = `https://restcountries.eu/rest/v2/`;
+			let movies = `https://api.themoviedb.org/3/search/movie?api_key=3da5e6e7a04f636199811dd74636e80d&language=${this.language}&query=${this.search}&page=${this.pageMovies}&include_adult=false`;
+			let serieTv = `https://api.themoviedb.org/3/search/tv?api_key=3da5e6e7a04f636199811dd74636e80d&language=${this.language}&query=${this.search}&page=${this.pageSerieTV}&include_adult=false`;
+			let countryRest = `https://restcountries.eu/rest/v2/all`;
 
 			const promise = Promise.all([this.getData(movies), this.getData(serieTv), this.getData(countryRest)]);
 			
 
-			//destrutturia la promaise 
+			//destrutturi la promais 
 			promise.then(([resp1,resp2,resp3]) => {
-				//console.log(resp1,resp2,resp3);
+				console.log(resp1,resp2,resp3);
 
 				//Movies
 				this.moviesList = resp1.data.results;
@@ -67,16 +62,48 @@ let appMoviesSearch = new Vue ({
 				this.totalPageSerieTV = resp2.data.total_pages;
 
 				//chiamata APY Country REST
-				let country = resp3.data;
-				console.log(country);
 				for (let index = 0; index < this.moviesList.length; index++) {
-					let movieCardLenguage = this.moviesList[index].original_language;
-					console.log(movieCardLenguage);
 					let country = resp3.data;
-					for (let i = 0; i < country.length; i++) {
-						const element = country[i].languages[0].iso639_1;
-						console.log(element);
-					}
+					let movieCardLenguage = this.moviesList[index].original_language;
+
+
+					/* let macroObj = country.filter((lang) => ((lang.alpha2Code).toLowerCase() == movieCardLenguage));
+					let arrProvvisorio=[];
+					macroObj.forEach(obj => {
+						let prova=obj.population;
+						arrProvvisorio.push(prova);
+					}); */
+					let restObj = [...country.filter((lang) => ((lang.alpha2Code).toLowerCase() == movieCardLenguage))];
+
+					moviesList.forEach(element => {
+						this.moviesList.flagLink = 
+						
+					});
+					console.log(restObj[0].flag);
+					
+					// ------ricordati che sei in un ciclo for sopra ----
+
+					
+
+					/* let languagesAPI_ISO639_1 = [...new Set(country.map(item => {
+						if ((item.alpha2Code).toLowerCase() == movieCardLenguage) 
+							return item.flag;					
+					} ))];
+					console.log(languagesAPI_ISO639_1);
+					this.arrayFlag.push(languagesAPI_ISO639_1[1]);
+					let arraySupporto=this.arrayFlag;
+					let arrayLink = arraySupporto.map(item =>  item.flag);
+					console.log(arrayLink); */
+
+					/* for (let i = 0; i < languagesAPI_ISO639_1.length; i++) {
+						const flagLink = languagesAPI_ISO639_1[i].flag;
+						console.log(flagLink);
+						//this.moviesList obj["key3"] = "value3";
+						
+					} */
+					//this.arrayFlag.push(languagesAPI_ISO639_1);
+					//console.log(this.arrayFlag[0][1][1]);//questo è il link della bandiera trovata
+					console.log(restObj);
 				}
 			})
 			.catch(error => {
