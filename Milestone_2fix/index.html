@@ -22,8 +22,8 @@
     <div id="appMoviesSearch" class="app_wrap">
       <header>
         <div class="container">
-          <img src="assets/img/logo_2.png" alt="logo" />
-          <h1>🎦 Moves Filter </h1>
+          <img src="assets/img/logo.png" alt="logo" />
+          <h1>🎦 Flicks Filter </h1>
           <nav>
             <form method="POST" @submit.prevent="searchMovies()">
               <input type="text" size="40" maxlength="256" v-model="search" placeholder="Search">
@@ -38,6 +38,8 @@
 
         <!-- Movies -->
         <section class="movies">
+          <h2 class="name_type_section" v-if="searchResults.arrayMovies">Flicks</h2>
+        <!-- potrebbe esser il contenuto del discriminante che identifica le sezioni cosi da sostituirlo mediante notazione Moustache  -->
           <!--TopBar - di navigazione tra le pagine di risultati ottenute -->
           <nav class="control_page" v-if="searchResults.totalPageMovies">
             <ul class="number_page">
@@ -53,15 +55,23 @@
             </ul>
             <!-- /.number_page -->
           </nav>
-          <div class="wrap">
+          <ul class="wrap">
             <!-- Movie Section -->
-            <div class="movie" v-for="(movie,n) in searchResults.arrayMovies">
-              <img 
+            <li class="movie" v-for="(movie,n) in searchResults.arrayMovies"
+              :style="(!movie.backgroungImgPoster) ? (`background: #000000 url('assets/img/logo.png')
+              no-repeat;
+              background-size: contain;`) :
+              (`background: #000000 url('https://image.tmdb.org/t/p/w342${movie.backgroungImgPoster}') no-repeat center
+              center /cover fixed;
+              background-size: cover;
+              overflow: hidden;`)">
+              <!-- si potrebbe anche pensare di collegare una funzione che rimanda il link in funzione della condizione di null -->
+              <!-- <img 
               v-if="movie.backgroungImgPoster"
               :src="'https://image.tmdb.org/t/p/w342' + movie.backgroungImgPoster"
-              alt="">
+              alt=""> -->
               <!-- in caso di immagine non presente logo -->
-              <img v-else src="assets/img/logo.png" alt="">
+              <!-- <img v-else src="assets/img/logo.png" alt=""> -->
               <h2 class="title_movie" v-if="movie.title != movie.originalTitle">Titolo: {{movie.title}}</h2>
               <h3 class="original_title_movie" >Titolo originale:
                 {{movie.originalTitle}}</h3><!-- modificare verifica trasformando in maiuscolo -->
@@ -70,10 +80,10 @@
                   <i :class="movie.vote > position ? 'fas fa-star' : 'far fa-star'"></i>
                 </span>         
               </div>
-              <img  src="" alt="">
-              <span class="flag_movie">{{movie.originaleLanguage}}</span>
-            </div>
-          </div>
+              <span class="original_lang_movie" v-if="!movie.flag">{{movie.originaleLanguage}}</span>
+              <img class="flag" v-else :src="movie.flag" :alt="movie.originaleLanguage">
+            </li>
+          </ul>
           <!-- /.wrap -->
           <!--FooterBar - di navigazione tra le pagine di risultati ottenute -->
           <nav class="control_page" v-if="searchResults.totalPageMovies">
@@ -93,31 +103,37 @@
           <!-- /.control_page -->
         </section>
         <!-- /.movies -->
-
+<!-- I due blocchi di codice sono costruiti nello stesso modo di conseguenza la fase successiva sarà trovare la soluzione mediante javascript di assiciale in nome o id all'array di contenuti come discriminante per generare con un solo blocco le due sezioni differenti -->
         <!-- Serie TV -->
         <section class="serie_tv">
+          <h2 class="name_type_section" v-if="(searchResults.arraySeries)">Serie TV</h2>
           <!--TopBar - di navigazione tra le pagine di risultati ottenute -->
           <nav class="control_page" v-if="searchResults.totalPageSerieTV">
             <ul class="number_page">
-              <li class="arrow_left" v-if="searchResults.totalPageSerieTV>1" @click="pagePrevious()"><i
+              <li class="arrow_left" v-if="searchResults.totalPageSerieTV>1" @click="pagePreviousSerieTV()"><i
                   class="fas fa-arrow-alt-square-left"></i>
               </li><!-- si potrebbe inserire un keydown da collegare all'arrow da tastiera -->
               <li class="number_page_control" v-for="index in searchResults.totalPageSerieTV"
                 @click="(pageSerieTV = index-1)&&callAPIMovies()">
                 {{index++}}</li>
               <!-- /.page -->
-              <li class="arrow_right" v-if="searchResults.totalPageSerieTV>1" @click="pageNext()"><i
+              <li class="arrow_right" v-if="searchResults.totalPageSerieTV>1" @click="pageNextSerieTV()"><i
                   class="fas fa-arrow-alt-square-right"></i>
             </ul>
             <!-- /.number_page -->
           </nav>
           <!-- Serie TV Section -->
-          <div class="wrap">
-            <div class="movie" v-for="serie in searchResults.arraySeries">
-              <img v-if="serie.backgroungImgPoster" :src="'https://image.tmdb.org/t/p/w342' + serie.backgroungImgPoster"
-                alt="">
+          <ul class="wrap">
+            <li class="movie" v-for="serie in searchResults.arraySeries"
+              :style="(!serie.backgroungImgPoster) ? (`background: #000000 url('assets/img/logo.png')
+              no-repeat;
+              background-size: contain;`) :
+              (`background: #000000 url('https://image.tmdb.org/t/p/w500${serie.backgroungImgPoster}') no-repeat;
+              background-size: cover`)">
+              <!-- <img v-if="serie.backgroungImgPoster" :src="'https://image.tmdb.org/t/p/w342' + serie.backgroungImgPoster"
+                alt=""> -->
               <!-- in caso di immagine non presente logo -->
-              <img v-else src="assets/img/logo.png" alt="">
+              <!-- <img v-else src="assets/img/logo.png" alt=""> -->
               <h2 class="title_movie" v-if="serie.title != serie.originalTitle">Titolo: {{serie.title}}</h2>
               <h3 class="original_title_movie">Titolo originale:
                 {{serie.originalTitle}}</h3><!-- modificare verifica trasformando in maiuscolo -->
@@ -126,9 +142,10 @@
                   <i :class="serie.vote > position ? 'fas fa-star' : 'far fa-star'"></i>
                 </span>
               </div>
-              <span class="flag_movie">{{serie.originaleLanguage}}</span>
-            </div>
-          </div>
+              <span class="original_lang_movie" v-if="!serie.flag">{{serie.originaleLanguage}}</span>
+              <img class="flag" v-else :src="serie.flag" alt="">
+            </li>
+          </ul>
           <!--FooterBar - di navigazione tra le pagine di risultati ottenute -->
           <nav class="control_page" v-if="searchResults.totalPageSerieTV">
             <ul class="number_page">
@@ -150,7 +167,6 @@
           <!-- /.control_page -->
         </section>
         <!-- /.serie_tv -->
-
       </main>
     </div>
     <!-- /.app_wrap -->
@@ -160,5 +176,5 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="assets/js/main.js" charset="utf-8"></script>
   </body>
-
 </html>
+

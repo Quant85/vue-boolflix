@@ -27,7 +27,6 @@ let appMoviesSearch = new Vue ({
 		language:"it-IT",
 	},
 	methods: {
-
 		getData(url){
 				return axios.get(url);
 		},
@@ -44,7 +43,7 @@ let appMoviesSearch = new Vue ({
 			const promise = Promise.all([this.getData(movies), this.getData(serieTv), this.getData(countryRest)]);
 			
 
-			//destrutturi la promais 
+			//destrutturiamo la promais 
 			promise.then(([resp1,resp2,resp3]) => {
 				console.log(resp1,resp2,resp3);
 
@@ -57,7 +56,7 @@ let appMoviesSearch = new Vue ({
 				function listResultsSeries() {}//definisco l'oggetto
 				const objRisultatiSeries = new listResultsSeries();//come per film cosi per serie tv
 
-				//questa funzione mi permette di assegmare degòi oggetti ad un oggetto origine che è il primo 
+				//questa funzione mi permette di assegmare degli oggetti ad un oggetto origine che è il primo 
 				function addElement(objRisultati,moviesList,seriesList,pageTot,startPage) {
 					let newList = Object.assign(objRisultati, moviesList,seriesList);
 					return newList;
@@ -110,48 +109,61 @@ let appMoviesSearch = new Vue ({
 				//this.serieTVList = objRisultatiSeries;//opzionale -per futuri sviluppi
 				this.searchResults = objRisults;
 
-				//chiamata APY Country REST
-				//for (let index = 0; index < this.moviesList.length; index++) {
-					//let country = resp3.data;
-					//let movieCardLenguage = this.moviesList[index].original_language;
-
-
-					/* let macroObj = country.filter((lang) => ((lang.alpha2Code).toLowerCase() == movieCardLenguage));
-					let arrProvvisorio=[];
-					macroObj.forEach(obj => {
-						let prova=obj.population;
-						arrProvvisorio.push(prova);
-					}); */
-					/* let restObj = [...country.filter((lang) => ((lang.alpha2Code).toLowerCase() == movieCardLenguage))];
-					let flagLink = restObj[0].flag;
-					console.log(flagLink); */
-
-					//this.arrayFlag = {flagLink: flagLink};
-					//console.log(restObj[0].flag);
+				//chiamata APY Country REST - associazione bandiere - lingua
 					
-					// ------ricordati che sei in un ciclo for sopra ----
+				/* gestione dell'errore - dovuto all'incongruenza di associare isoCode lingueistici a delle bandiere */
+				/* creando un oggetto contenente come valore key il code linguistico e come valore il code bandiera associato, in caso di futuri errori riscontrati o cambiamenti associativi di bandiere lingua si potra aggiungere un nuovo elemento all'oggetto o variare quelli presenti */
 
-					
+				/* questi sono solo alcuni errori facilmente e direttamente riscontrati - questo vuol esser una possibile dimostrazione della sua gestione */
+				let country = resp3.data;
 
-					/* let languagesAPI_ISO639_1 = [...new Set(country.map(item => {
-						if ((item.alpha2Code).toLowerCase() == movieCardLenguage) 
-							return item.flag;					
-					} ))];
-					console.log(languagesAPI_ISO639_1);
-					this.arrayFlag.push(languagesAPI_ISO639_1[1]);
-					let arraySupporto=this.arrayFlag;
-					let arrayLink = arraySupporto.map(item =>  item.flag);
-					console.log(arrayLink); */
+				let errorFlag = {
+					ar: "ae",
+					cs: "cz",
+					da: "dk",
+					en: "gb",
+					el: "gr",
+					et: "ee",
+					hu: "ua",
+					ja: "jp",
+					ko: "kr",
+					vi: "vn",
+					ta: "lk",
+					zh: "cn",
+				};
 
-					/* for (let i = 0; i < languagesAPI_ISO639_1.length; i++) {
-						const flagLink = languagesAPI_ISO639_1[i].flag;
-						console.log(flagLink);
-						//this.moviesList obj["key3"] = "value3";
-						
-					} */
-					//this.arrayFlag.push(languagesAPI_ISO639_1);
-					//console.log(this.arrayFlag[0][1][1]);//questo è il link della bandiera trovata
-				//}
+				getFlagLink(arraySeries,errorFlag);
+				getFlagLink(arrayMovies,errorFlag);
+				
+				function errorCheckerFlags(readyArray,errorCheckerObj){
+					let arrayKeyObj = Object.keys(errorCheckerObj);
+					let molt = (readyArray.length * arrayKeyObj.length);//anche se ho un solo risultato partiranno almeno tot cicli qunti sono le potenziali correzioni
+					for (let z = 0; z < (molt); z++) {
+						for (let i = 0; i < molt; i++) {
+							let keyObj = arrayKeyObj[i];
+							let check = readyArray.indexOf(keyObj);
+							if (check != -1) {
+								readyArray[check] = errorCheckerObj[keyObj];	
+							}
+						}
+					}
+				}			
+				function getFlagLink(arrayType,errorCheckerObj){
+					let flagalphA2Code = country.map(e => [e.alpha2Code.toLowerCase(),e.flag]);
+					let arrayLang = arrayType.map(e => e.originaleLanguage);
+					errorCheckerFlags(arrayLang,errorCheckerObj);
+					for (let n = 0; n < arrayType.length; n++) {
+						let isoLang = arrayLang[n];
+						for (let i = 0; i < flagalphA2Code.length; i++) {
+							let alphA2Code = flagalphA2Code[i][0];
+							let flagLink = flagalphA2Code[i][1];
+							if (isoLang == alphA2Code) {
+								arrayType[n].flag = flagLink;
+							}
+						}
+					}
+				}
+				
 			})
 			.catch(error => {
 					console.log(error);
@@ -164,13 +176,11 @@ let appMoviesSearch = new Vue ({
 				this.callAPIMovies();
 			}
 		},
-
 		//trasformare in funzioni riutilizzabili - trovare il modo di legare la page number per evitare la sovrascrizione del valore alla generazione della chiamata
 		pageNext(){
 			if((this.pageMovies) !== (this.searchResults.totalPageMovies)){
 				this.pageMovies++;
 				this.callAPIMovies();
-				this.getPageCounter();
 			}
 		},
 		pagePrevious(){
