@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>BOOLFLIX</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon/favicon.icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js"></script>
+
+  <!-- Fontawesome  -->
+  <script src="https://kit.fontawesome.com/30fc0982d8.js"></script>
+  <script type="text/javascript" src="assets/js/fontawesome/font.js"></script>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+  <body>
+    <div id="appMoviesSearch" class="app_wrap">
+      <header>
+        <div class="container">
+          <img src="assets/img/logo.png" alt="logo" />
+          <h1>🎦 Flicks Filter </h1>
+          <nav>
+            <form method="POST" @submit.prevent="searchMovies()">
+              <input type="text" size="40" maxlength="256" v-model="search" placeholder="Search">
+                <!-- :keyup="searchMovies(search)" questo porta ad un loop di chiamate nel momento in cui è attivo-->
+              <input type="submit" name="search_button" value="Search">
+            </form>
+          </nav>
+        </div>
+      </header>
+
+      <main class="cds-container container">
+        <section class="category_type" v-for="(category,key,position) in searchResults" :key="key">
+          <h2 class="name_type_section">{{category.nameCategory}}</h2>
+          <nav class="control_page" v-if="category.results">
+            <ul class="number_page">
+              <li class="arrow_left" v-if="category.totalPage>1" @click="pagePrevious(category.totalPage)"><i
+                  class="fas fa-arrow-alt-square-left"></i>
+              </li><!-- si potrebbe inserire un keydown da collegare all'arrow da tastiera -->
+              <li class="number_page_control" v-for="(index, z) in category.totalPage"
+                @click="changeThisPage(category.totalPage,z)">
+                {{index++}}</li>
+              <!-- /.page -->
+              <li class="arrow_right" v-if="category.totalPage>1" @click="pageNext(category.totalPage)"><i
+                  class="fas fa-arrow-alt-square-right"></i>
+            </ul>
+            <!-- /.number_page -->
+          </nav>
+          <ul class="wrap">
+            <!-- Movie Section -->
+            <li class="movie" v-for="(movie,n) in category.results"
+              :style="(!movie.backgroungImgPoster) ? (`background: #000000 url('assets/img/logo.png')
+              no-repeat;
+              background-size: contain;`) :
+              (`background: #000000 url('https://image.tmdb.org/t/p/w342${movie.backgroungImgPoster}') no-repeat center
+              center /cover fixed;
+              background-size: cover;
+              overflow: hidden;`)">
+              <h2 class="title_movie" v-if="movie.title != movie.originalTitle">Titolo: {{movie.title}}</h2>
+              <h3 class="original_title_movie">Titolo originale:
+                {{movie.originalTitle}}</h3>
+              <div>
+                <span class="stars_vote" v-for="(stars,position) in 5">
+                  <i :class="movie.vote > position ? 'fas fa-star' : 'far fa-star'"></i>
+                </span>
+              </div>
+              <span class="original_lang_movie" v-if="!movie.flag">{{movie.originaleLanguage}}</span>
+              <img class="flag" v-else :src="movie.flag" :alt="movie.originaleLanguage">
+            </li>
+          </ul>
+          <nav class="control_page" v-if="category.results">
+            <ul class="number_page">
+              <li class="arrow_left" v-if="category.totalPage>1" @click="pagePrevious(category.totalPage)"><i
+                  class="fas fa-arrow-alt-square-left"></i>
+              </li><!-- si potrebbe inserire un keydown da collegare all'arrow da tastiera -->
+              <li class="number_page_control" v-for="index in category.totalPage"
+                @click="changeThisPage(category.totalPage,z)">
+                {{index++}}</li>
+              <!-- /.page -->
+              <li class="arrow_right" v-if="category.totalPage>1" @click="pageNext(category.totalPage)"><i
+                  class="fas fa-arrow-alt-square-right"></i>
+            </ul>
+            <!-- /.number_page -->
+          </nav>
+        </section>
+        <!-- /.category_type -->
+      </main>
+    </div>
+    <!-- /.app_wrap -->
+
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="assets/js/main.js" charset="utf-8"></script>
+  </body>
+</html>
+
