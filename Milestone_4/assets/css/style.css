@@ -214,9 +214,17 @@ header #avatar {
 .movie span.stars_vote {
     color: rgb(224, 238, 30);
 }
+
+.overview{
+    height: 320px;
+    text-overflow: ellipsis;
+    overflow: auto;
+}
+
 .overview>p{
     max-width: 420px;
     display: inline;
+    text-overflow: ellipsis;
 }
 .flag{
     width: 40%;
