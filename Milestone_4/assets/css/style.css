@@ -173,8 +173,7 @@ header #avatar {
 .card_info{
     opacity: 0;
     transition: opacity 0.9s cubic-bezier(0, 0.24, 0.59, 0.46);
-    position: relative;
-    
+    position: relative;  
 }
 
 .movie:hover .card_info {
