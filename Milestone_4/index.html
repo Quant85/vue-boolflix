@@ -21,18 +21,40 @@
   <body>
     <div id="appMoviesSearch" class="app_wrap">
       <header>
-        <div class="container">
-          <img src="assets/img/logo.png" alt="logo" />
-          <h1>🎦 Flicks Filter </h1>
-          <nav>
-            <form method="POST" @submit.prevent="searchMovies()">
-              <input type="text" size="40" maxlength="256" v-model="search" placeholder="Search">
-                <!-- :keyup="searchMovies(search)" questo porta ad un loop di chiamate nel momento in cui è attivo-->
-              <input type="submit" name="search_button" value="Search">
-            </form>
+        <div class="container bootflixlogo">
+          <div class="header_left">
+            <a id="logo" href="#home">
+              <img src="assets/img/logo.png" alt="logo" />
+            </a>
+            <nav class="main_nav">
+              <a href="#home">Home</a>
+              <a href="#tvShows">TV Shows</a>
+              <a href="#movies">Movies</a>
+              <a href="#originals">Originals</a>
+              <a href="#">Recently Added</a>
+            </nav>
+          </div>
+          <!-- /.header_left -->
+          <!--  <h1>🎦 Flicks Filter </h1> -->
+          <nav class="sub_nav">           
+            <transition name="slide-fade">
+              <form :class="{show:visible}" method="POST" @submit.prevent="searchMovies()" v-if="visible">
+                <input class="search_input"  type="text" size="30" maxlength="200" v-model="search" placeholder="Search">
+              </form>             
+            </transition>
+            <a href="#" @click="visible = !visible"><i class="fas fa-search sub-nav-logo"></i>
+            </a>
+            <a href="#"><i class="fas fa-bell sub-nav-logo"></i></a>
+            <a href="#">Account</a>
+            <a id="logo" href="#home">
+              <img id="avatar" src="assets/img/avatar.png" alt="avatar" />
+            </a>
           </nav>
         </div>
       </header>
+      <!-- END OF HEADER -->
+
+      <!-- MAIN CONTAINER -->
 
       <main class="cds-container container">
         <section class="category_type" v-for="(category,key,position) in searchResults" :key="key">
@@ -42,10 +64,12 @@
               <li class="arrow_left" v-if="category.totalPage>1" @click="pagePrevious(category.totalPage)"><i
                   class="fas fa-arrow-alt-square-left"></i>
               </li><!-- si potrebbe inserire un keydown da collegare all'arrow da tastiera -->
-              <li class="number_page_control" v-for="(index, z) in category.totalPage"
-                @click="changeThisPage(category.totalPage,z)">
-                {{index++}}</li>
-              <!-- /.page -->
+              <div class="wrap_numbers">
+                <li class="number_page_control" v-for="(index, z) in category.totalPage"
+                  @click="changeThisPage(category.totalPage,z)">
+                  {{index++}}</li>
+                <!-- /.page -->                
+              </div>
               <li class="arrow_right" v-if="category.totalPage>1" @click="pageNext(category.totalPage)"><i
                   class="fas fa-arrow-alt-square-right"></i>
             </ul>
@@ -57,19 +81,30 @@
               :style="(!movie.backgroungImgPoster) ? (`background: #000000 url('assets/img/logo.png')
               no-repeat;
               background-size: contain;`) :
-              (`background: #000000 url('https://image.tmdb.org/t/p/w220_and_h330_face${movie.backgroungImgPoster}')
-              no-repeat center
+              (`background: #000000 url('https://image.tmdb.org/t/p/w220_and_h330_face${movie.backgroungImgPoster}') no-repeat center
               center /cover fixed;
               background-size: cover;
               overflow: hidden;`)">
               <div class="card_info">
-                <h2 class="title_movie" v-if="movie.title != movie.originalTitle">Titolo: {{movie.title}}</h2>
-                <h3 class="original_title_movie">Titolo originale:
-                  {{movie.originalTitle}}</h3>
+                <div v-if="movie.title != movie.originalTitle">
+                  <h2 class="title_movie">Titolo: 
+                  </h2>
+                  <span>{{movie.title}}</span>
+                </div>
+                
+                <h2 class="original_title_movie">Titolo originale: </h2>
+                <span>{{movie.originalTitle}}</span>
                 <div>
+                  <h2>Voto: </h2>
                   <span class="stars_vote" v-for="(stars,position) in 5">
                     <i :class="movie.vote > position ? 'fas fa-star' : 'far fa-star'"></i>
                   </span>
+                </div>
+                <div class="overview">
+                  <h2>Overview: </h2>
+                  <p>
+                    {{movie.overview}}
+                  </p>
                 </div>
                 <span class="original_lang_movie" v-if="!movie.flag">{{movie.originaleLanguage}}</span>
                 <img class="flag" v-else :src="movie.flag" :alt="movie.originaleLanguage">
@@ -82,10 +117,12 @@
               <li class="arrow_left" v-if="category.totalPage>1" @click="pagePrevious(category.totalPage)"><i
                   class="fas fa-arrow-alt-square-left"></i>
               </li><!-- si potrebbe inserire un keydown da collegare all'arrow da tastiera -->
-              <li class="number_page_control" v-for="index in category.totalPage"
-                @click="changeThisPage(category.totalPage,z)">
-                {{index++}}</li>
-              <!-- /.page -->
+              <div class="wrap_numbers">
+                <li class="number_page_control" v-for="index in category.totalPage"
+                  @click="changeThisPage(category.totalPage,z)">
+                  {{index++}}</li>
+                <!-- /.page -->
+              </div>
               <li class="arrow_right" v-if="category.totalPage>1" @click="pageNext(category.totalPage)"><i
                   class="fas fa-arrow-alt-square-right"></i>
             </ul>

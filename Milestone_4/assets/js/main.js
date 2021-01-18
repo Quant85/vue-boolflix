@@ -20,6 +20,7 @@ let appMoviesSearch = new Vue ({
 		pageMovies: 1,//inserito di default in chiamata - lo teniamo fino a nuova soluzione o variazione -
 		pageSerieTV: 1,//inserito di default in chiamata - lo teniamo fino a nuova soluzione o variazione -per scorrere/caricare ulteriori risultati
 		language:"it-IT",
+		visible:true,
 	},
 	methods: {
 		getData(url){
@@ -56,7 +57,7 @@ let appMoviesSearch = new Vue ({
 					let newList = Object.assign(objRisultati, moviesList,seriesList);
 				}  --- sostituita per aggiornamento nello schema di creazione degli oggetti*/
 
-				function getObjArray(array,arrayPush,img,title,originTitle,originaleLanguage,vote,flagLink){
+				function getObjArray(array,arrayPush,img,title,originTitle,originaleLanguage,vote,flagLink,description){
 					array.forEach(element => {
 						let keyObj = {
 							backgroungImgPoster: element[img],
@@ -64,7 +65,8 @@ let appMoviesSearch = new Vue ({
 							originalTitle:element[originTitle],
 							originaleLanguage:element[originaleLanguage],
 							vote:(Math.ceil(element[vote]/2)),
-							flag:element[flagLink]
+							flag:element[flagLink],
+							overview: element['overview'],
 						};
 						arrayPush.push(keyObj);
 					});
@@ -76,7 +78,7 @@ let appMoviesSearch = new Vue ({
 				//this.totalPageMovies = resp1.data.total_pages;//---da eliminare
 				
 				let arrayMovies = [];//mi creo un array di appoggio per poi creare un oggetto di ogetti contenenti tutti i risultati dei film
-				getObjArray(moviesRes,arrayMovies,'poster_path','title','original_title','original_language','vote_average');
+				getObjArray(moviesRes,arrayMovies,'poster_path','title','original_title','original_language','vote_average','overview'); 
 
 				objRisultatiMovies.results = arrayMovies;			
 				
@@ -85,7 +87,7 @@ let appMoviesSearch = new Vue ({
 				let seriesRes = resp2.data.results;//faccio una richiesta per le serie tv
 
 				let arraySeries = [];//mi creo un array di appoggio per i risultati delle serie tv
-				getObjArray(seriesRes,arraySeries,'poster_path','name','original_name','original_language','vote_average');
+				getObjArray(seriesRes,arraySeries,'poster_path','name','original_name','original_language','vote_average','overview');
 
 				objRisultatiSeries.results = arraySeries;
 				
