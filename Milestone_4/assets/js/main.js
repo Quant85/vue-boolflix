@@ -31,10 +31,23 @@ let appMoviesSearch = new Vue ({
 
 			/******* Si crea dipendenza nella generazione ******/
 			/* Promise.all () accetta più promesse in un array, le esegue simultaneamente e restituisce una serie di risposte come promessa. */
+			let prefixMovies,prefixSerieTv,suffixMovies,suffixSerieTv,movies,serieTv,countryRest;
 
-			let movies = `https://api.themoviedb.org/3/search/movie?api_key=3da5e6e7a04f636199811dd74636e80d&language=${this.language}&query=${this.search}&page=${this.pageMovies}&include_adult=${this.adult}`;
-			let serieTv = `https://api.themoviedb.org/3/search/tv?api_key=3da5e6e7a04f636199811dd74636e80d&language=${this.language}&query=${this.search}&page=${this.pageSerieTV}&include_adult=${this.adult}`;
-			let countryRest = `https://restcountries.eu/rest/v2/all`;
+			if (this.search !== ""){
+				 prefixMovies = "https://api.themoviedb.org/3/search/movie";
+				 prefixSerieTv = "https://api.themoviedb.org/3/search/tv";
+				 suffixMovies = `&query=${this.search}&page=${this.pageMovies}&include_adult=${this.adult}`;
+				 suffixSerieTv = `&query=${this.search}&page=${this.pageMovies}&include_adult=${this.adult}`;
+			} else {
+				 prefixMovies = "https://api.themoviedb.org/3/movie/popular";
+				 prefixSerieTv = "https://api.themoviedb.org/3/tv/popular";
+				 suffixMovies = ``;
+				 suffixSerieTv = ``;
+			}
+
+			movies = `${prefixMovies}?api_key=${this.key}&language=${this.language}${suffixMovies}`;
+			serieTv = `${prefixSerieTv}?api_key=${this.key}&language=${this.language}${suffixSerieTv}`;
+			countryRest = `https://restcountries.eu/rest/v2/all`;
 
 			const promise = Promise.all([this.getData(movies), this.getData(serieTv), this.getData(countryRest)]);
 			
@@ -210,4 +223,7 @@ let appMoviesSearch = new Vue ({
 			}
 		}
 	},
+	async mounted() {
+		this.callAPIMovies();
+	}
 });
